@@ -127,7 +127,7 @@ nicspy ginp -i *.mol -b "def2svp" --ecp "def2tzvp"
 - スピン多重度の変更: `-m [multiplicity]` (デフォルトは `-m 1`)
 - SCF 収束条件の変更: `--scf tight` など
 - 出力ファイル名を指定 `-o [filename]`
-- 出力ファイルの接尾辞の変更 `-s [suffix]` (デフォルトは `-s "_nics"`)
+- 出力ファイルの接尾辞の変更 `-s [suffix]` (デフォルトは `-s "_tddft"`)
 - 出力ファイルの拡張子の変更: `-e com` (デフォルトは `-e gjf`)
 - Gaussian 出力のレベルの変更: `--verbose 1` (デフォルトは `--verbose 0`)
 
@@ -154,7 +154,7 @@ chiropy gout -i *.out
 
 ### 励起状態の選択
 
-`--state` を指定することで、励起状態を選択することができます。
+`--state` を指定することで、励起状態を選択することができます。デフォルトは `1` です。
 
 ```bash
 第3励起状態の情報を表示
@@ -172,3 +172,4 @@ chiropy gout -i *.out --state 3
 
 - `--image`: GUI を表示せず、画像をエクスポート
 - `--summary`: GUI を表示せず、結果の概要を標準出力に表示
+

@@ -39,7 +39,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # ginp.py
-    ptns_ginp = ["*.mol", "*.mol2", "*.sdf", "*.xyz", "*.cif", "*.out", "*.log"]
+    ptns_ginp = ["*.mol", "*.mol2", "*.sdf", "*.xyz", "*.pdb", "*.cif", "*.out", "*.log"]
     ptns_ginpout = ["*.gjf", "*.com"]
     
     parser_ginp = subparsers.add_parser("ginp", help="Generate TD-DFT calculation input.")

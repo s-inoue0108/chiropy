@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="chiropy",
-    version="1.0.1",
+    version="1.0.2",
     description="CHIROpy is a Gaussian binding tool for analyze chiroptical properties.",
     long_description=long_description,
     long_description_content_type="text/markdown",

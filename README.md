@@ -96,7 +96,7 @@ chiropy ginp -i *.mol --root 2 --nstate 4 --opt
 
 ```bash
 # CAM-B3LYP に変更
-nicspy ginp -i *.mol -f "cam-b3lyp"
+chiropy ginp -i *.mol -f "cam-b3lyp"
 ```
 
 ### 基底関数系
@@ -105,10 +105,10 @@ nicspy ginp -i *.mol -f "cam-b3lyp"
 
 ```bash
 # def2-TZVP に変更
-nicspy ginp -i *.mol -b "def2tzvp"
+chiropy ginp -i *.mol -b "def2tzvp"
 
 # wB97X-D/6-311G(d,p) に変更
-nicspy ginp -i *.mol -f "wb97xd" -b "6-311g(d,p)"
+chiropy ginp -i *.mol -f "wb97xd" -b "6-311g(d,p)"
 ```
 
 ### 有効内殻ポテンシャル
@@ -117,10 +117,10 @@ nicspy ginp -i *.mol -f "wb97xd" -b "6-311g(d,p)"
 
 ```bash
 # LanL2DZ を指定
-nicspy ginp -i *.mol --ecp "lanl2dz"
+chiropy ginp -i *.mol --ecp "lanl2dz"
 
 # def2-SVP/def2-TZVP を指定
-nicspy ginp -i *.mol -b "def2svp" --ecp "def2tzvp"
+chiropy ginp -i *.mol -b "def2svp" --ecp "def2tzvp"
 ```
 
 ### その他のオプション
@@ -135,7 +135,7 @@ nicspy ginp -i *.mol -b "def2svp" --ecp "def2tzvp"
 
 # Gaussian アウトプットの解析 (`chiropy gout`)
 
-アウトプットファイルを読み取り、キラル光学特性に関わる物理量を計算します。特に、ETDM および MTDM についてはベクトルを化学構造上にマッピング表示します。
+TD-DFT 計算のアウトプットファイルを読み取り、キラル光学特性に関わる物理量を計算して表示します。
 
 ```bash
 # アウトプットファイルを解析する (*.out または *.log)
@@ -144,6 +144,17 @@ chiropy gout -i *.out
 # ヘルプ
 chiropy gout --help
 ```
+
+各種物理量は、アウトプットファイルに含まれる電気遷移双極子モーメントの各成分 $(\mu_x, \mu_y, \mu_z)$ および磁気遷移双極子モーメントの各成分 $(m_x, m_y, m_z)$ から、以下のように算出されます。
+
+| 物理量| 記号 | 定義または計算式 |
+| :--- | :--- | :---|
+| 電気遷移双極子モーメント | $\mu$, $\vert \boldsymbol{\mu} \vert$ | $(\mu_x, \mu_y, \mu_z)$ |
+| 磁気遷移双極子モーメント | $m$, $\vert \boldsymbol{m} \vert$ | $(m_x, m_y, m_z)$ |
+| E-M Angle (deg) | $\theta_{\mu m}$ | $\mathrm{Arccos} ~ \dfrac{\boldsymbol{\mu} \cdot \boldsymbol{m}}{\vert \boldsymbol{\mu} \vert \vert \boldsymbol{m} \vert}$ |
+| g 値 | $g$ | $4 \dfrac{\vert \boldsymbol{\mu} \vert \vert \boldsymbol{m} \vert}{\vert \boldsymbol{\mu} \vert^2 + \vert \boldsymbol{m} \vert^2} \cos \theta_{\mu m}$ |
+
+ETDM および MTDM についてはベクトルを化学構造上にマッピング表示します。
 
 ## GUI による表示
 
@@ -159,7 +170,7 @@ chiropy gout -i *.out
 `--state` を指定することで、励起状態を選択することができます。デフォルトは `1` です。
 
 ```bash
-第3励起状態の情報を表示
+# 第3励起状態の情報を表示
 chiropy gout -i *.out --state 3
 ```
 
@@ -175,3 +186,10 @@ chiropy gout -i *.out --state 3
 - `--image`: GUI を表示せず、画像をエクスポート
 - `--summary`: GUI を表示せず、結果の概要を標準出力に表示
 
+```bash
+# state 2 の結果を水素付きで表示して、画像をエクスポート
+chiropy gout -i *.out --state 2 --showh --image
+
+# 結果のサマリーを表示
+chiropy gout -i *.out --summary
+```

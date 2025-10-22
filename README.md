@@ -2,6 +2,9 @@
 
 Gaussian TD-DFT 計算のファイル生成とキラル光学特性解析を行うユーティリティプログラムです。
 
+- [GitHub](https://github.com/s-inoue0108/chiropy)
+- [PDF マニュアル](https://github.com/s-inoue0108/chiropy/README.pdf)
+
 ## 依存関係
 
 Python3 と、以下の Python パッケージを必要とします：
@@ -17,10 +20,17 @@ Python3 と、以下の Python パッケージを必要とします：
 
 ## インストール
 
-Python 3.10 以上の環境を用意し、wheel バイナリから `pip install` によって依存パッケージごとインストールすることができます。
+Python 3.10 以上の環境を必要とします。
 
 ```bash
+# GitHub からインストール
+pip install git+https://github.com/s-inoue0108/chiropy.git
+
+# wheel バイナリからインストール
 pip install chiropy-***.whl
+
+# ソースからインストール
+pip install chiropy-***.tar.gz
 ```
 
 ```bash

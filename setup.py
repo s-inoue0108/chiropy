@@ -10,7 +10,7 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name="chiropy",
-    version="1.0.4",
+    version="1.0.5",
     description="CHIROpy is a Gaussian binding tool for analyze chiroptical properties.",
     long_description=long_description,
     long_description_content_type="text/markdown",

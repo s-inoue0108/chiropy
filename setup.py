@@ -1,11 +1,16 @@
 from setuptools import setup, find_packages
 
+# long description
 with open("README.md", "r") as f:
     long_description = f.read()
+    
+# install requires
+with open("requirements.txt", "r") as f:
+    install_requires = f.readlines()
 
 setup(
     name="chiropy",
-    version="1.0.2",
+    version="1.0.4",
     description="CHIROpy is a Gaussian binding tool for analyze chiroptical properties.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -20,7 +25,7 @@ setup(
     license="MIT",
     include_package_data=True,
     packages=find_packages(),
-    install_requires=open("requirements.txt").read().splitlines(),
+    install_requires=install_requires,
     python_requires=">=3.10",
 )
 

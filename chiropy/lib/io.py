@@ -1,8 +1,34 @@
 import os
+import sys
+import site
+import subprocess
+
+def ensure_openbabel_wheel():
+    if os.environ.get("LD_LIBRARY_PATH_INITIALIZED"):
+        return
+
+    paths = []
+    paths += site.getsitepackages()
+    paths += [site.getusersitepackages()]
+
+    for p in paths:
+        wheel_lib = os.path.join(p, "openbabel")
+        if os.path.isdir(wheel_lib):
+            os.environ["LD_LIBRARY_PATH"] = wheel_lib
+            os.environ["LD_LIBRARY_PATH_INITIALIZED"] = "1"
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+            break
+
+ensure_openbabel_wheel()
+
+try:
+    from openbabel import pybel
+except ImportError:
+    import pybel
+    
 import re
 import numpy as np
 from rdkit import Chem
-from openbabel import pybel
 from .geometry import Geometry
 
 class StructureIO:

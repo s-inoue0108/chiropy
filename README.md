@@ -7,34 +7,28 @@ Gaussian TD-DFT 計算のファイル生成とキラル光学特性解析を行�
 
 ## 依存関係
 
-Python3 と、以下の Python パッケージを必要とします：
+Python 3.10 以上と、以下の Python パッケージを必要とします：
 
 - NumPy
 - RDKit
 - OpenBabel
-  - eigen
 - NetworkX
 - Matplotlib
 
-また、OpenBabel 3.1.\* のバイナリプログラムを別途必要とします。MacOSX であれば、HomeBrew (`brew install openbabel`) で入れることができます。
+また、OpenBabel 3.1.\* のバイナリプログラムを必要とします。
 
 ## インストール
 
-Python 3.10 以上の環境を必要とします。
-
 ```bash
-# GitHub からインストール
+# PyPI から最新版をインストール
+pip install chiropy
+
+# GitHub から最新版をインストール
 pip install git+https://github.com/s-inoue0108/chiropy.git
-
-# wheel バイナリからインストール
-pip install chiropy-***.whl
-
-# ソースからインストール
-pip install chiropy-***.tar.gz
 ```
 
 ```bash
-# 確認
+# インストールの確認
 pip list | grep chiropy
 
 # CLI のテスト

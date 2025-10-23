@@ -6,7 +6,6 @@ import networkx as nx
 from matplotlib import font_manager as fm
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcl
-from scipy.interpolate import griddata
 
 class Visualizer:
     def __init__(self, calc, args):

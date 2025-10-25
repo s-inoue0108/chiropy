@@ -1,4 +1,13 @@
 from setuptools import setup, find_packages
+import re
+
+# version
+def get_version():
+    with open("chiropy/__init__.py") as f:
+        match = re.search(r'__version__ = "([^"]+)"', f.read())
+        if match:
+            return match.group(1)
+        raise RuntimeError("Version not found in chiropy/__init__.py")
 
 # long description
 with open("README.md", "r") as f:
@@ -10,12 +19,11 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name="chiropy",
-    version="1.0.5",
+    version=get_version(),
     description="CHIROpy is a Gaussian binding tool for analyze chiroptical properties.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Shota Inoue",
-    author_email="inoue.shota@st.kitasato-u.ac.jp",
     entry_points={
         "console_scripts": [
             "chiropy = chiropy.main:main",
@@ -26,6 +34,6 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     install_requires=install_requires,
-    python_requires=">=3.10",
+    python_requires=">= 3.10, < 3.12",
 )
 

@@ -1,5 +1,7 @@
 import argparse as ap
 import fnmatch
+
+from chiropy import __version__
 from . import ginp
 from . import gout
 
@@ -34,8 +36,18 @@ def mul_validator(val):
 def main():
     parser = ap.ArgumentParser(
         prog="chiropy",
-        description="Gaussian binding tool for analyze chiroptical properties."
+        description=(
+            f"Gaussian binding tool for analyze chiroptical properties.\n\n"
+            "----------------------------------------------------\n"
+            "author  : Shota Inoue\n"
+            "license : MIT\n"
+            "guide   : https://github.com/s-inoue0108/chiropy\n"
+            "----------------------------------------------------"
+        ),
+        formatter_class=ap.RawTextHelpFormatter,
     )
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
+    
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # ginp.py
@@ -62,7 +74,7 @@ def main():
     # gout.py
     ptns_gout = ["*.out", "*.log"]
     
-    parser_gout = subparsers.add_parser("gout", help="Analize TD-DFT calculation output.")
+    parser_gout = subparsers.add_parser("gout", help="Analyze TD-DFT calculation output.")
     parser_gout.add_argument("-i", "--input", type=ext_validator(ptns_gout), required=True, help="Gaussian TD-DFT calculation output.")
     parser_gout.add_argument("--state", type=neg_validator, default=1, help="Excited state number.")
     parser_gout.add_argument("--symbol", action="store_true", help="Display atom symbols instead of ball-and-stick model.")

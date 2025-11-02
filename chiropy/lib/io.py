@@ -56,14 +56,13 @@ class StructureIO:
     # load mol object
     def file2mol(self, removeHs=False):
         mol = next(pybel.readfile(self.format, self.input))
-        mol_block = mol.write("mol").strip()
+        mol_block = mol.write("mol").rstrip()
         rdmol = Chem.MolFromMolBlock(mol_block, removeHs=removeHs)
         return rdmol
         
     # load mol object by string
     def str2mol(self, removeHs=False):
         mol = pybel.readstring(self.format, self.input)
-        
         mol_block = mol.write("mol").strip()
         rdmol = Chem.MolFromMolBlock(mol_block, removeHs=removeHs)
         return rdmol

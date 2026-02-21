@@ -1,21 +1,23 @@
 import os
 import sys
 from importlib.resources import files
-import numpy as np
-import networkx as nx
-from matplotlib import font_manager as fm
-import matplotlib.pyplot as plt
+
 import matplotlib.colors as mcl
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+from matplotlib import font_manager as fm
+
 
 class Visualizer:
     def __init__(self, calc, args):
         self.calc = calc
         self.args = args
         self.basename = os.path.splitext(os.path.basename(args.input))[0]
-        
+
     def get_basename(self):
         return self.basename
-        
+
     # visualize
     def visualize(self):
         atom_colors = {
@@ -70,7 +72,7 @@ class Visualizer:
             "Rn": "#3FDFFF",
             "*": "purple",
         }
-        
+
         background = "#000b29" if self.args.dark else "#ffffff"
         foreground = "#ffffff" if self.args.dark else "#000000"
         negative = "#7852dc" if self.args.dark else "#9900fa"
@@ -78,21 +80,21 @@ class Visualizer:
 
         arial_path = files("chiropy.assets") / "Arial.ttf"
         arial = fm.FontProperties(fname=arial_path)
-        
+
         plt.rcParams["font.family"] = arial.get_name()
         plt.rcParams["mathtext.fontset"] = "cm"
 
         plt.rcParams["figure.facecolor"] = background
-        plt.rcParams["axes.facecolor"]   = background
+        plt.rcParams["axes.facecolor"] = background
         plt.rcParams["text.color"] = foreground
         plt.rcParams["axes.labelcolor"] = foreground
         plt.rcParams["xtick.color"] = foreground
         plt.rcParams["ytick.color"] = foreground
-        
+
         fig = plt.figure(figsize=(12, 8))
         ax = fig.add_subplot(111, projection="3d")
         fig.canvas.manager.set_window_title(f"Visualizer | {self.args.input}")
-        
+
         # get graph
         geom = self.calc.goutio.get_geometry()
         graph = geom.get_graph()
@@ -106,17 +108,22 @@ class Visualizer:
             size = 100 if symbols[i] == "H" else 300
             fsize = 16 if symbols[i] == "H" else 24
             color = atom_colors[symbols[i]]
-            
+
             # display node
             if symbols[i] != "*":
-                if self.args.showh:
+                if self.args.showh or symbols[i] != "H":
                     if self.args.symbol:
-                        ax.text(x, y, z, symbols[i], c=color, fontsize=fsize, fontweight="bold", ha="center", va="center")
-                    else:
-                        ax.scatter(x, y, z, s=size, c=color)
-                elif symbols[i] != "H":
-                    if self.args.symbol:
-                        ax.text(x, y, z, symbols[i], c=color, fontsize=fsize, fontweight="bold", ha="center", va="center")
+                        ax.text(
+                            x,
+                            y,
+                            z,
+                            symbols[i],
+                            c=color,
+                            fontsize=fsize,
+                            fontweight="bold",
+                            ha="center",
+                            va="center",
+                        )
                     else:
                         ax.scatter(x, y, z, s=size, c=color)
 
@@ -125,28 +132,38 @@ class Visualizer:
         for i, j, data in graph.edges(data=True):
             symbol_i = nodes[i]["symbol"]
             symbol_j = nodes[j]["symbol"]
-            
+
             # skip display hydrogen
             if not self.args.showh and (symbol_i == "H" or symbol_j == "H"):
                 continue
-            
+
             x = [pos[i][0], pos[j][0]]
             y = [pos[i][1], pos[j][1]]
             z = [pos[i][2], pos[j][2]]
-            
+
             if data["order"] == 3:
                 ax.plot(x, y, z, color="gray", linewidth=7.5)
                 bv = np.array([x[1] - x[0], y[1] - y[0], z[1] - z[0]])
-                
+
                 # normal vec
-                tmp = np.array([0, 0, 1]) if not np.allclose(bv[:2], 0) else np.array([0, 1, 0])
+                tmp = (
+                    np.array([0, 0, 1])
+                    if not np.allclose(bv[:2], 0)
+                    else np.array([0, 1, 0])
+                )
                 u = np.cross(bv, tmp)
                 u /= np.linalg.norm(u)
                 offset = 0.05
                 for sft in [-offset, offset]:
                     s = np.array((x[0], y[0], z[0])) + sft * u
                     e = np.array((x[1], y[1], z[1])) + sft * u
-                    ax.plot([s[0], e[0]], [s[1], e[1]], [s[2], e[2]], color=background, linewidth=1.5)
+                    ax.plot(
+                        [s[0], e[0]],
+                        [s[1], e[1]],
+                        [s[2], e[2]],
+                        color=background,
+                        linewidth=1.5,
+                    )
             elif data["order"] == 2:
                 ax.plot(x, y, z, color="gray", linewidth=4.5)
                 ax.plot(x, y, z, color=background, linewidth=1.5)
@@ -155,36 +172,56 @@ class Visualizer:
                 ax.plot(x, y, z, color=background, linewidth=1.5)
             else:
                 ax.plot(x, y, z, color="gray", linewidth=2)
-                
+
         # draw transition moment vectors
         # get center of mass
         com_x, com_y, com_z = np.array(geom.mol_center_of_mass())
-        
+
         # get etdm and mtdm
         etdm_x, etdm_y, etdm_z = self.calc.etdm_vec(self.args.state)
         mtdm_x, mtdm_y, mtdm_z = self.calc.mtdm_vec(self.args.state)
         scale = 2.0
-        
-        ax.quiver(com_x, com_y, com_z, scale * etdm_x, scale * etdm_y, scale * etdm_z, color=positive, arrow_length_ratio=0.2, linewidth=2)
-        ax.quiver(com_x, com_y, com_z, scale * mtdm_x, scale * mtdm_y, scale * mtdm_z, color=negative, arrow_length_ratio=0.2, linewidth=2)
-        
+
+        ax.quiver(
+            com_x,
+            com_y,
+            com_z,
+            scale * etdm_x,
+            scale * etdm_y,
+            scale * etdm_z,
+            color=positive,
+            arrow_length_ratio=0.2,
+            linewidth=2,
+        )
+        ax.quiver(
+            com_x,
+            com_y,
+            com_z,
+            scale * mtdm_x,
+            scale * mtdm_y,
+            scale * mtdm_z,
+            color=negative,
+            arrow_length_ratio=0.2,
+            linewidth=2,
+        )
+
         # display prop values
         def format_f(val):
             if val is None:
-                return "\mathrm{{None}}"
-            return f"{val:.2f}\ \mathrm{{deg}}"
-            
+                return r"\mathrm{{None}}"
+            return rf"{val:.2f}\ \mathrm{{deg}}"
+
         def format_e(val):
             if val is None:
-                return "\mathrm{{None}}"
+                return r"\mathrm{{None}}"
             s = f"{val:.2e}"
             mantissa, exp = s.split("e")
             exp = int(exp)
             return f"{mantissa} \\times 10^{{{exp}}}"
-            
+
         em_angle = format_f(self.calc.em_angle(self.args.state))
         g_fac = format_e(self.calc.g_fac(self.args.state))
-        
+
         if not self.args.notext:
             ax.text2D(
                 0.00,
@@ -197,7 +234,7 @@ class Visualizer:
                 verticalalignment="top",
                 horizontalalignment="left",
             )
-            
+
             ax.text2D(
                 0.00,
                 0.90,
@@ -208,7 +245,7 @@ class Visualizer:
                 verticalalignment="top",
                 horizontalalignment="left",
             )
-            
+
             ax.text2D(
                 0.00,
                 0.85,
@@ -219,7 +256,7 @@ class Visualizer:
                 verticalalignment="top",
                 horizontalalignment="left",
             )
-            
+
             ax.text2D(
                 1.00,
                 0.90,
@@ -230,7 +267,7 @@ class Visualizer:
                 verticalalignment="top",
                 horizontalalignment="right",
             )
-            
+
             ax.text2D(
                 1.00,
                 0.85,
@@ -241,21 +278,21 @@ class Visualizer:
                 verticalalignment="top",
                 horizontalalignment="right",
             )
-        
+
         x_max = np.max([item[1][0] for item in pos.items()])
         x_min = np.min([item[1][0] for item in pos.items()])
         y_max = np.max([item[1][1] for item in pos.items()])
         y_min = np.min([item[1][1] for item in pos.items()])
         z_max = np.max([item[1][2] for item in pos.items()])
         z_min = np.min([item[1][2] for item in pos.items()])
-            
+
         ax.set_axis_off()
         ax.set_box_aspect([x_max - x_min, y_max - y_min, z_max - z_min])
         ax.set_xlim(x_min, x_max)
         ax.set_ylim(y_min, y_max)
         ax.set_zlim(z_min, z_max)
         plt.tight_layout()
-        
+
         # show plot or save
         if self.args.image:
             imgname = f"{self.get_basename()}.png"
@@ -264,5 +301,3 @@ class Visualizer:
             plt.close()
         else:
             plt.show()
-
-

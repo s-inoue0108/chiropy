@@ -13,28 +13,30 @@
 # ---------------------------------------------------------------------------
 
 from .lib.geometry import Geometry
-from .lib.io import StructureIO, GinpIO
+from .lib.io import GinpIO, StructureIO
+
 
 # main function
 def main(args):
     # make RDKit mol object
     sio = StructureIO(args.input)
     mol = sio.file2mol()
-    
+
     # init geometry
     geom = Geometry(mol, args)
-    
+
     # generate all coordinate
     original_coords = geom.original_atoms_coords()
-    
+
     # init input file i/o
     ginpio = GinpIO(original_coords, args)
-    
+
     # save gaussian com file
     ginpio.save()
-    
+
     # notice
     print(f"Generate TD-DFT calculation file: {ginpio.get_output()}")
+
 
 # execute
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
-from setuptools import setup, find_packages
 import re
+
+from setuptools import find_packages, setup
+
 
 # version
 def get_version():
@@ -9,12 +11,13 @@ def get_version():
             return match.group(1)
         raise RuntimeError("Version not found in chiropy/__init__.py")
 
+
 # long description
-with open("README.md", "r") as f:
+with open("README.md") as f:
     long_description = f.read()
-    
+
 # install requires
-with open("requirements.txt", "r") as f:
+with open("requirements.txt") as f:
     install_requires = f.readlines()
 
 setup(
@@ -36,4 +39,3 @@ setup(
     install_requires=install_requires,
     python_requires=">= 3.10, < 3.12",
 )
-

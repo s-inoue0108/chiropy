@@ -14,23 +14,25 @@
 #    - Matplotlib
 # ---------------------------------------------------------------------------
 
-from .lib.io import StructureIO, GoutIO
-from .lib.calculator import Calculator
-from .lib.visualizer import Visualizer
 import numpy as np
+
+from .lib.calculator import Calculator
+from .lib.io import GoutIO, StructureIO
+from .lib.visualizer import Visualizer
+
 
 # main function
 def main(args):
     # init out file i/o
     goutio = GoutIO(args)
-    
+
     # init chiroptical props calculator
     calc = Calculator(goutio, args)
-    
+
     if not args.summary:
         # init visualizer
         vis = Visualizer(calc, args)
-        
+
         # visualize chiroptical props
         vis.visualize()
     else:
@@ -45,19 +47,23 @@ def main(args):
             norm_mtdm = np.linalg.norm([m["x"], m["y"], m["z"]])
             em_angle = calc.em_angle(state) or None
             g_fac = calc.g_fac(state) or None
-            
+
             def format_f(val):
                 if val is None:
                     return "None"
                 return f"{val:.2f}"
-                
+
             def format_e(val):
                 if val is None:
                     return "None"
                 return f"{val:.2e}"
-            
-            print(f" {state}\t{format_f(norm_etdm)}\t{format_f(norm_mtdm)}\t{format_f(em_angle)}\t{format_e(g_fac)}")
+
+            print(
+                f" {state}\t{format_f(norm_etdm)}\t{format_f(norm_mtdm)}\t{format_f(em_angle)}\t{format_e(g_fac)}"
+            )
         print("------------------------------------------------")
+
+
 # execute
 if __name__ == "__main__":
     main()
